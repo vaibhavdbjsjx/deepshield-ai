@@ -1,0 +1,11 @@
+fastapi
+uvicorn
+opencv-python
+numpy
+pillow
+python-multipart
+reportlab
+pyjwt
+torch
+transformers
+huggingface_hub

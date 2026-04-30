@@ -1,0 +1,117 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 222 47% 6%;
+    --foreground: 210 40% 96%;
+    --card: 222 47% 9%;
+    --primary: 217 91% 60%;
+    --secondary: 222 47% 14%;
+    --muted: 222 30% 16%;
+    --muted-foreground: 215 20% 65%;
+    --accent: 222 47% 14%;
+    --border: 222 30% 18%;
+    --input: 222 30% 18%;
+    --ring: 217 91% 60%;
+    --success: 142 71% 45%;
+    --danger: 0 72% 51%;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: Inter, system-ui, sans-serif;
+    background:
+      radial-gradient(circle at 10% 10%, hsl(217 91% 60% / 0.18), transparent 28%),
+      radial-gradient(circle at 90% 20%, hsl(199 89% 48% / 0.16), transparent 34%),
+      linear-gradient(180deg, hsl(var(--background)), hsl(222 47% 4%));
+    min-height: 100vh;
+  }
+}
+
+@layer utilities {
+  .glass-card {
+    background: linear-gradient(135deg, hsl(222 47% 12% / 0.8), hsl(222 47% 8% / 0.8));
+    backdrop-filter: blur(16px);
+    border: 1px solid hsl(var(--border));
+  }
+
+  .glass-card-hover {
+    @apply glass-card transition-all duration-300;
+  }
+
+  .glass-card-hover:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 40px hsl(217 91% 60% / 0.18);
+  }
+
+  .gradient-text {
+    background: linear-gradient(135deg, hsl(217 91% 60%), hsl(199 89% 48%));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .result-real {
+    color: hsl(var(--success));
+  }
+
+  .result-fake {
+    color: hsl(var(--danger));
+  }
+
+  .app-shell {
+    position: relative;
+    isolation: isolate;
+  }
+
+  .animated-bg {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+  }
+
+  .animated-bg::before,
+  .animated-bg::after {
+    content: "";
+    position: absolute;
+    width: 32rem;
+    height: 32rem;
+    border-radius: 9999px;
+    filter: blur(80px);
+    opacity: 0.22;
+    animation: floatOrb 16s ease-in-out infinite;
+  }
+
+  .animated-bg::before {
+    background: hsl(217 91% 60% / 0.8);
+    top: -6rem;
+    left: -6rem;
+  }
+
+  .animated-bg::after {
+    background: hsl(280 89% 65% / 0.7);
+    right: -7rem;
+    bottom: -8rem;
+    animation-delay: -7s;
+  }
+
+  .animated-grid {
+    position: absolute;
+    inset: 0;
+    background-image: linear-gradient(hsl(217 30% 25% / 0.12) 1px, transparent 1px), linear-gradient(90deg, hsl(217 30% 25% / 0.12) 1px, transparent 1px);
+    background-size: 48px 48px;
+    mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
+  }
+}
+
+@keyframes floatOrb {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(28px) scale(1.06); }
+}

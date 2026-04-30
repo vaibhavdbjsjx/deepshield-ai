@@ -1,0 +1,28 @@
+{
+  "scans": [
+    {
+      "id": "d49ef1e265004da383e42e0c7b96ccbe",
+      "type": "image",
+      "file_name": "realistic-ai-generated-photographs-v0-os6rwa3g58vc1.jpg",
+      "prediction": "REAL",
+      "confidence": 0.5418,
+      "timestamp": 1777364550.740523,
+      "report_path": "/Users/vaibhavsg/ML/backend/services/../reports/report_image_1777364550.pdf"
+    },
+    {
+      "id": "424dac4499fd4476af98063ec39c0ff2",
+      "type": "image",
+      "file_name": "realistic-ai-generated-photographs-v0-os6rwa3g58vc1.jpg",
+      "prediction": "UNCERTAIN",
+      "confidence": 0.5184,
+      "timestamp": 1777371364.418537,
+      "report_path": "/Users/vaibhavsg/ML/backend/services/../reports/report_image_1777371364.pdf"
+    }
+  ],
+  "totals": {
+    "image": 2,
+    "video": 0,
+    "audio": 0,
+    "live": 0
+  }
+}

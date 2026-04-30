@@ -1,0 +1,9 @@
+{
+  "name": "DeepShield AI",
+  "short_name": "DeepShield",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#080d18",
+  "theme_color": "#2563eb",
+  "description": "AI-powered deepfake detection for image, video, audio, and live streams."
+}
