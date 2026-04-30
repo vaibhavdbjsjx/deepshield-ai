@@ -1,6 +1,10 @@
 import axios from "axios"
 
-const api = axios.create({ baseURL: "/", timeout: 120000 })
+// 👇 THIS IS THE ONLY CHANGE
+const api = axios.create({
+  baseURL: import.meta.env.VITE_API_URL,
+  timeout: 120000
+})
 
 export interface DetectionResult {
   prediction: "FAKE" | "REAL" | "UNCERTAIN"
@@ -84,38 +88,72 @@ export async function detectImage(file: File) {
   form.append("file", file)
   return (await api.post<DetectionResult>("/detect/image", form)).data
 }
+
 export async function detectVideo(file: File) {
   const form = new FormData()
   form.append("file", file)
   return (await api.post<VideoDetectionResult>("/detect/video", form)).data
 }
+
 export async function detectAudio(file: File) {
   const form = new FormData()
   form.append("file", file)
   return (await api.post<AudioDetectionResult>("/detect/audio", form)).data
 }
+
 export async function detectLiveFrame(blob: Blob) {
   const form = new FormData()
   form.append("file", blob, "frame.jpg")
   return (await api.post<DetectionResult>("/detect/live", form)).data
 }
+
 export async function explainImage(file: File) {
   const form = new FormData()
   form.append("file", file)
   return (await api.post<DetectionResult>("/explain/image", form)).data
 }
+
 export async function runFusion(imageFile: File | null, audioFile: File | null) {
   const form = new FormData()
   if (imageFile) form.append("image", imageFile)
   if (audioFile) form.append("audio", audioFile)
   return (await api.post<FusionResult>("/api/fusion", form)).data
 }
-export async function getAnalytics() { return (await api.get<AnalyticsData>("/api/analytics")).data }
-export async function getMetrics() { return (await api.get<ModelMetrics>("/api/metrics")).data }
-export async function getHistory() { return (await api.get<{ items: HistoryItem[] }>("/api/history")).data }
-export async function getSettings() { return (await api.get<AppSettings>("/api/settings")).data }
-export async function saveSettings(payload: Partial<AppSettings>) { return (await api.post<AppSettings>("/api/settings", payload)).data }
-export async function getShareInfo() { return (await api.get<ShareInfo>("/api/share")).data }
-export async function register(email: string, password: string, name: string) { await api.post("/auth/register", { email, password, name }) }
-export async function login(email: string, password: string) { return (await api.post<{ access_token: string; token_type: string }>("/auth/login", { email, password })).data }
-export async function getProfile(token: string) { return (await api.get<{ email: string; name: string }>("/auth/profile", { headers: { Authorization: `Bearer ${token}` } })).data }
+
+export async function getAnalytics() {
+  return (await api.get<AnalyticsData>("/api/analytics")).data
+}
+
+export async function getMetrics() {
+  return (await api.get<ModelMetrics>("/api/metrics")).data
+}
+
+export async function getHistory() {
+  return (await api.get<{ items: HistoryItem[] }>("/api/history")).data
+}
+
+export async function getSettings() {
+  return (await api.get<AppSettings>("/api/settings")).data
+}
+
+export async function saveSettings(payload: Partial<AppSettings>) {
+  return (await api.post<AppSettings>("/api/settings", payload)).data
+}
+
+export async function getShareInfo() {
+  return (await api.get<ShareInfo>("/api/share")).data
+}
+
+export async function register(email: string, password: string, name: string) {
+  await api.post("/auth/register", { email, password, name })
+}
+
+export async function login(email: string, password: string) {
+  return (await api.post<{ access_token: string; token_type: string }>("/auth/login", { email, password })).data
+}
+
+export async function getProfile(token: string) {
+  return (await api.get<{ email: string; name: string }>("/auth/profile", {
+    headers: { Authorization: `Bearer ${token}` }
+  })).data
+}
