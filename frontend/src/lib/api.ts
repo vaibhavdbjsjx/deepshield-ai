@@ -11,10 +11,40 @@ const api = axios.create({
 export interface DetectionResult {
   prediction: "FAKE" | "REAL" | "UNCERTAIN"
   confidence: number
+  trust_score?: number
+  details_title?: string
+  reasons?: string[]
+  breakdown?: { face: number; texture: number; artifact: number }
+  model_info?: string
+  disclaimer?: string
+  stabilizing?: boolean
+  message?: string
+  no_face?: boolean
+  heatmap?: string
+  overlay?: string
+}
+
+export interface VideoDetectionResult extends DetectionResult {
+  frames_analyzed: number
+  fake_percentage: number
+  frame_results: {
+    frame_index: number
+    timestamp: number
+    prediction: "FAKE" | "REAL"
+    confidence: number
+  }[]
+}
+
+export interface AudioDetectionResult extends DetectionResult {
+  spectrogram: string
+  waveform: string
+  duration: number
+  sample_rate: number
 }
 
 export interface AnalyticsData {
   total_scans: number
+  totals_by_type: Record<string, number>
   fake_count: number
   real_count: number
   avg_confidence: number
@@ -25,14 +55,7 @@ export interface ModelMetrics {
   precision: number
   recall: number
   f1_score: number
-}
-
-export interface HistoryItem {
-  id: string
-  type: string
-  prediction: string
-  confidence: number
-  timestamp: number
+  model_name: string
 }
 
 export interface AppSettings {
@@ -41,7 +64,18 @@ export interface AppSettings {
   sensitivity: number
 }
 
+export interface HistoryItem {
+  id: string
+  type: string
+  file_name: string
+  prediction: string
+  confidence: number
+  timestamp: number
+  report_path?: string
+}
+
 export interface ShareInfo {
+  local_url: string
   public_url: string
 }
 
@@ -66,6 +100,12 @@ export async function detectAudio(file: File) {
   const form = new FormData()
   form.append("file", file)
   return (await api.post("/detect/audio", form)).data
+}
+
+export async function detectLiveFrame(blob: Blob) {
+  const form = new FormData()
+  form.append("file", blob, "frame.jpg")
+  return (await api.post("/detect/live", form)).data
 }
 
 export async function explainImage(file: File) {
