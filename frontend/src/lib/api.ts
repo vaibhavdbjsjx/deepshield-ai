@@ -39,6 +39,7 @@ export interface AnalyticsData {
   total_scans: number
   fake_count: number
   real_count: number
+  avg_confidence?: number
   totals_by_type?: Record<string, number>
 }
 
