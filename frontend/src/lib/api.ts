@@ -1,15 +1,9 @@
 import axios from "axios"
 
-// safe env (avoids TS error)
-const API_BASE =
-  (import.meta as any).env?.VITE_API_URL || "/"
-
 const api = axios.create({
-  baseURL: API_BASE,
-  timeout: 120000
+  baseURL: "https://deepshield-ai-1-o34u.onrender.com",
+  timeout: 120000,
 })
-
-/* ================= TYPES ================= */
 
 export interface DetectionResult {
   prediction: "FAKE" | "REAL" | "UNCERTAIN"
@@ -17,7 +11,11 @@ export interface DetectionResult {
   trust_score?: number
   details_title?: string
   reasons?: string[]
-  breakdown?: { face: number; texture: number; artifact: number }
+  breakdown?: {
+    face: number
+    texture: number
+    artifact: number
+  }
   model_info?: string
   disclaimer?: string
   stabilizing?: boolean
@@ -30,33 +28,18 @@ export interface DetectionResult {
 export interface VideoDetectionResult extends DetectionResult {
   frames_analyzed: number
   fake_percentage: number
-  frame_results: {
-    frame_index: number
-    timestamp: number
-    prediction: "FAKE" | "REAL"
-    confidence: number
-  }[]
 }
 
 export interface AudioDetectionResult extends DetectionResult {
-  spectrogram: string
-  waveform: string
-  duration: number
-  sample_rate: number
+  spectrogram?: string
+  waveform?: string
 }
 
 export interface AnalyticsData {
   total_scans: number
-  totals_by_type: Record<string, number>
   fake_count: number
   real_count: number
-  avg_confidence: number
-  recent_scans?: {
-    type: string
-    prediction: string
-    confidence: number
-    timestamp: number
-  }[]
+  totals_by_type?: Record<string, number>
 }
 
 export interface ModelMetrics {
@@ -64,8 +47,7 @@ export interface ModelMetrics {
   precision: number
   recall: number
   f1_score: number
-  model_name: string
-  input_size?: string
+  model_name?: string
 }
 
 export interface AppSettings {
@@ -77,58 +59,58 @@ export interface AppSettings {
 export interface HistoryItem {
   id: string
   type: string
-  file_name: string
   prediction: string
   confidence: number
   timestamp: number
+  file_name?: string
   report_path?: string
 }
 
 export interface ShareInfo {
-  local_url: string
-  public_url: string
-  fallback_message?: string
+  local_ip?: string
+  local_url?: string
+  public_url?: string
   https_ready?: boolean
+  fallback_message?: string
 }
 
 export interface FusionResult {
   risk_level: string
   explanation: string
-  modalities?: {
-    face?: { prediction: string; confidence: number } | null
-    voice?: { prediction: string; confidence: number } | null
-  }
 }
-
-/* ================= API ================= */
 
 export async function detectImage(file: File) {
   const form = new FormData()
   form.append("file", file)
+
   return (await api.post<DetectionResult>("/detect/image", form)).data
 }
 
 export async function detectVideo(file: File) {
   const form = new FormData()
   form.append("file", file)
+
   return (await api.post<VideoDetectionResult>("/detect/video", form)).data
 }
 
 export async function detectAudio(file: File) {
   const form = new FormData()
   form.append("file", file)
+
   return (await api.post<AudioDetectionResult>("/detect/audio", form)).data
 }
 
 export async function detectLiveFrame(blob: Blob) {
   const form = new FormData()
   form.append("file", blob, "frame.jpg")
+
   return (await api.post<DetectionResult>("/detect/live", form)).data
 }
 
 export async function explainImage(file: File) {
   const form = new FormData()
   form.append("file", file)
+
   return (await api.post<DetectionResult>("/explain/image", form)).data
 }
 
@@ -137,8 +119,10 @@ export async function runFusion(
   audioFile: File | null
 ) {
   const form = new FormData()
+
   if (imageFile) form.append("image", imageFile)
   if (audioFile) form.append("audio", audioFile)
+
   return (await api.post<FusionResult>("/api/fusion", form)).data
 }
 
@@ -171,25 +155,37 @@ export async function register(
   password: string,
   name: string
 ) {
-  await api.post("/auth/register", { email, password, name })
+  await api.post("/auth/register", {
+    email,
+    password,
+    name,
+  })
 }
 
-export async function login(email: string, password: string) {
+export async function login(
+  email: string,
+  password: string
+) {
   return (
-    await api.post<{ access_token: string; token_type: string }>(
-      "/auth/login",
-      { email, password }
-    )
+    await api.post<{
+      access_token: string
+      token_type: string
+    }>("/auth/login", {
+      email,
+      password,
+    })
   ).data
 }
 
 export async function getProfile(token: string) {
   return (
-    await api.get<{ email: string; name: string }>(
-      "/auth/profile",
-      {
-        headers: { Authorization: `Bearer ${token}` }
-      }
-    )
+    await api.get<{
+      email: string
+      name: string
+    }>("/auth/profile", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
   ).data
 }
